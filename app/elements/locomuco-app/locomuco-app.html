@@ -1,0 +1,181 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scrollpos-control/app-scrollpos-control.html">
+
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="locomuco-components.html">
+<link rel="import" href="locomuco-blog.html">
+
+
+<dom-module id="locomuco-app">
+
+  <template>
+
+    <style>
+
+    .avatar-container {
+      position: relative;
+      border: 2px solid #00AA8D;
+      border-radius: 50%;
+      height: 90px;
+      padding: 2px;
+      width: 90px;
+      margin: 20px auto;
+    }
+    .avatar-container .image {
+      background-image: url('//lh4.googleusercontent.com/-6w1L55EeIhY/AAAAAAAAAAI/AAAAAAAAWTc/AsDOVXo8QYo/photo.jpg');
+      background-size: contain;
+      border-radius: 50%;
+      height: 100%;
+      width: 100%;
+    }
+    .contact-info {
+      margin: 0 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #CCC;
+      text-align: center;
+    }
+    .contact-info .name {
+      font-weight: bold;
+    }
+    .contact-info .email {
+      color: #999;
+    }
+    app-header {
+      color: #fff;
+      background-color: #00AA8D;
+      font-family: Consolas, monaco, monospace;
+    }
+    app-toolbar {
+      height: 120px;
+    }
+    paper-item {
+      @apply(--layout-center-center);
+      height: 54px;
+    }
+    paper-icon-button {
+      --paper-icon-button-ink-color: white;
+    }
+    [title] {
+      text-align: center;
+      -webkit-transform-origin: center top !important;
+      transform-origin: center top !important;
+      font-size: 50px;
+    }
+
+    </style>
+
+    <app-location route="{{_route}}" use-hash-as-path></app-location>
+    <app-route
+    route="{{_route}}"
+    pattern="/:page"
+    data="{{_pageData}}"
+    tail="{{_subRoute}}">
+    </app-route>
+    <app-route
+    route="{{_subRoute}}"
+    pattern="/:id"
+    data="{{_idData}}">
+    </app-route>
+
+    <app-drawer-layout>
+      <app-drawer id="drawer" swipe-open>
+        <div class="avatar-container">
+              <div class="image"></div>
+            </div>
+        <div class="contact-info">
+              <div class="name">locomuco</div>
+              <div class="email">matthias.boesl@gmail.com</div>
+        </div>
+        <!-- nav menu -->
+        <paper-listbox
+            selected="{{_pageData.page}}"
+            attr-for-selected="name"
+            on-iron-activate="_drawerSelected">
+          <paper-item name="blog">blog</paper-item>
+          <paper-item name="components">components</paper-item>
+        </paper-listbox>
+      </app-drawer>
+      <app-header-layout>
+        <app-header>
+          <app-toolbar class="top-toolbar">
+                    <content select="[drawer-toggle]"></content>
+                    <div title>[[_pageData.page]]</div>
+          </app-toolbar>
+        </app-header>
+
+
+
+      </app-header-layout>
+
+      <iron-pages selected="[[_pageData.page]]" attr-for-selected="id">
+
+          <div id="blog">
+            <locomuco-blog></locomuco-blog>
+          </div>
+
+          <div id="components">
+            <locomuco-components></locomuco-components>
+          </div>
+
+
+      </iron-pages>
+
+    </app-drawer-layout>
+
+  </template>
+
+  <script>
+  Polymer({
+    is: 'locomuco-app',
+    properties: {
+
+      recipes: Object,
+
+      _route: Object,
+
+      _subRoute: Object,
+
+      _pageData: Object,
+
+      _idData: Object
+    },
+
+    attached: function() {
+      this.async(function() {
+        if (!this._route.path) {
+          this.set('_route.path', '/blog');
+        }
+      });
+    },
+
+    _drawerSelected: function() {
+      if (!this.$.drawer.persistent) this.$.drawer.close();
+    }
+
+  });
+  </script>
+
+</dom-module>

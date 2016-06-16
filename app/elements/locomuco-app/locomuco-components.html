@@ -1,0 +1,87 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-storage.html">
+
+<link rel="import" href="camera-element.html">
+
+<dom-module id="locomuco-components">
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+      }
+      paper-material {
+        width: 80%;
+        margin: auto;
+        text-align: center;
+      }
+    </style>
+
+    <paper-material>
+
+      <!-- Configure Firebase app: -->
+      <firebase-app
+        name="locomuco"
+        api-key="AIzaSyCkK3Inuva74VSOQtqCMGhM0zdCfoFD4BM"
+        auth-domain="project-4156531278292366083.firebaseio.com"
+        database-url="https://project-4156531278292366083.firebaseio.com/"
+        storage-url="project-4156531278292366083.appspot.com">
+      </firebase-app>
+
+
+
+      <firebase-storage
+        id="upload-snapshot"
+        app-name="locomuco"
+        path="snapshots/">
+      </firebase-storage>
+
+      <camera-element
+        picture="{{snap}}">
+      </camera-element>
+      <div>
+        <paper-button on-tap="_onTakePhoto">take a photo</paper-button>
+      <div>
+
+    </paper-material>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'locomuco-components',
+
+        properties: {
+          snap: {
+            type: Object,
+            observer: '_saveSnap'
+          },
+        },
+        _saveSnap: function()
+        {
+          var upload = document.querySelector('#upload-snapshot');
+          this.snap.name = "bla";
+          upload._uploadFile(this.snap);
+        },
+
+      });
+    })();
+  </script>
+</dom-module>

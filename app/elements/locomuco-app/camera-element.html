@@ -1,0 +1,143 @@
+
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="camera-element">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <video hidden=true id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div>
+      <paper-button on-tap="_onTakePhoto">take a photo</paper-button>
+    <div>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'camera-element',
+
+      properties: {
+        /**
+         * Set width for video capture width
+         *
+         * @attribute width
+         */
+        width: {
+          type: Number,
+          value: 320,
+        },
+        /**
+         * Set height for video capture height
+         *
+         * @attribute height
+         */
+        height: {
+          type: Number,
+          value: 240,
+        },
+        /**
+         * Captured Picture
+         *
+         * @attribute height
+         */
+        picture: {
+          type: Object,
+          notify: true,
+        },
+        /**
+         * Captured Picture
+         *
+         * @attribute height
+         */
+        timer: {
+          type: Object,
+        },
+
+      },
+      _onRestart: function() {
+        this.timer = setInterval(this.processImage.bind(this) , 50);
+      },
+      _onTakePhoto: function() {
+        this.takeSnapshot();
+      },
+      ready: function() {
+        var canvas = this.$.canvas,
+        context = canvas.getContext("2d"),
+        video = this.$.video,
+        videoObj = { "video": true },
+        errBack = function(error) {
+          console.log("Video capture error: ", error.code);
+        };
+        this.timer = setInterval(this.processImage.bind(this) , 50);
+        // Put video listeners into place
+        if(navigator.getUserMedia) { // Standard
+          navigator.getUserMedia(videoObj, function(stream) {
+            video.src = stream;
+            video.play();
+          }, errBack);
+        } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+          navigator.webkitGetUserMedia(videoObj, function(stream){
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+          }, errBack);
+        }
+        else if(navigator.mozGetUserMedia) { // Firefox-prefixed
+          navigator.mozGetUserMedia(videoObj, function(stream){
+            video.src = window.URL.createObjectURL(stream);
+            video.play();
+          }, errBack);
+        }
+      },
+
+      processImage: function() {
+        this.digits = null;
+        var canvas = this.$.canvas;
+        var result = false;
+        context = canvas.getContext("2d");
+        context.canvas.width  = window.innerWidth/100*80;
+        context.canvas.height = window.innerHeight/100*80;
+        video = this.$.video;
+        videoObj = { "video": true };
+        context.drawImage(video, 0, 0, context.canvas.width, context.canvas.height);
+      },
+      takeSnapshot: function() {
+        var canvas = this.$.canvas;
+        var result = false;
+        context = canvas.getContext("2d");
+        context.canvas.width  = window.innerWidth/100*80;
+        context.canvas.height = window.innerHeight/100*80;
+        video = this.$.video;
+        videoObj = { "video": true };
+        context.drawImage(video, 0, 0, context.canvas.width, context.canvas.height);
+        var img = canvas.toDataURL('image/jpeg');
+        this.picture = this.dataURItoBlob(img);
+        clearInterval(this.timer);
+
+      },
+      dataURItoBlob: function(dataURI) {
+        // convert base64/URLEncoded data component to raw binary data held in a string
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0)
+          byteString = atob(dataURI.split(',')[1]);
+        else
+          byteString = unescape(dataURI.split(',')[1]);
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        // write the bytes of the string to a typed array
+        var ia = new Uint8Array(byteString.length);
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ia], {type:mimeString});
+      },
+
+    });
+  </script>
+</dom-module>

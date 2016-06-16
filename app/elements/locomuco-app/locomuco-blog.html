@@ -9,25 +9,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-styles/typography.html">
 
-<dom-module id="my-greeting">
+
+<dom-module id="locomuco-blog">
   <template>
-    <style include="shared-styles">
-      :host {
-        display: block;
-      }
-
-      span,
-      input {
-        @apply(--paper-font-body2);
-      }
-    </style>
-
-    <h1 class="page-title" tabindex="-1">{{greeting}}</h1>
-    <label for="greeting-input">Update text to change the greeting.</label>
-    <!-- Listens for "input" event and sets greeting to <input>.value -->
-    <input id="greeting-input" value="{{greeting::input}}">
+  <style include="shared-styles">
+    :host {
+      display: block;
+    }
+    paper-material {
+      width: 80%;
+      margin: 20px auto;
+      text-align: center;
+    }
+  </style>
+  <paper-material>Interface Design for reusable Web Components</paper-material>
   </template>
 
   <script>
@@ -35,14 +31,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'use strict';
 
       Polymer({
-        is: 'my-greeting',
+        is: 'locomuco-blog',
 
         properties: {
-          greeting: {
-            type: String,
-            value: 'Welcome!',
-            notify: true
-          }
+
         }
       });
     })();
